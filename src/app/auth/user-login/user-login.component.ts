@@ -4,16 +4,17 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 @Component({
   selector: 'app-user-login',
   templateUrl: './user-login.component.html',
-  styleUrls: ['./user-login.component.scss'],
+  styleUrls: ['./../../app.component.scss'],
 })
 export class UserLoginComponent implements OnInit{
 
-  form: FormGroup;
+  loginForm: FormGroup;
+  submitted = false;
 
   constructor() { }
 
   ngOnInit() {
-    this.form = new FormGroup({
+    this.loginForm = new FormGroup({
       email: new FormControl(null, [
         Validators.required,
         Validators.email
@@ -26,6 +27,15 @@ export class UserLoginComponent implements OnInit{
   }
 
   submit() {
-    this.form.reset();
+    this.submitted = true
+
+    const user = {
+      email: this.loginForm.value.email,
+      password: this.loginForm.value.password
+    };
+
+    console.log(user)
+
+    this.loginForm.reset();
   }
 }
