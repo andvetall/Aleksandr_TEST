@@ -1,19 +1,26 @@
+import { AuthService, UserData } from './../auth.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-user-login',
   templateUrl: './user-login.component.html',
-  styleUrls: ['./user-login.component.scss'],
+  styleUrls: ['./../../app.component.scss'],
 })
 export class UserLoginComponent implements OnInit{
 
-  form: FormGroup;
+  loginForm: FormGroup;
+  submitted = false;
+  error: any;
 
-  constructor() { }
+  constructor(
+    public auth: AuthService,
+    private toastr: ToastrService
+  ) { }
 
   ngOnInit() {
-    this.form = new FormGroup({
+    this.loginForm = new FormGroup({
       email: new FormControl(null, [
         Validators.required,
         Validators.email
@@ -26,6 +33,27 @@ export class UserLoginComponent implements OnInit{
   }
 
   submit() {
-    this.form.reset();
+    if(this.loginForm.invalid) {
+      return
+    };
+
+    this.submitted = true;
+
+    const user: UserData = {
+      email: this.loginForm.value.email,
+      password: this.loginForm.value.password
+    };
+
+    console.log(user);
+
+    this.auth.login(user).subscribe((res: any) => {
+      console.log(res);      
+      this.loginForm.reset()
+      this.submitted = false
+    }, (err) => {
+      this.error = err.error.error.message;
+      this.toastr.error(this.error)
+    })
+
   }
 }

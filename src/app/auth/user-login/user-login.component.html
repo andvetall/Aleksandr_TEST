@@ -1,23 +1,37 @@
-<div class="container">
-    <form [formGroup]="form" (ngSubmit)="submit()">
-        <!-- <div class="form-control">
-            <label for="email">Email: </label>
-            <input id="email" type="email" formControlName="email">
-        </div> -->
-        <mat-form-field class="form-element">
-            <mat-label>Input: </mat-label>
-            <input matInput placeholder="Email" formControlName="email">
+<mat-toolbar color="primary">Login to the App</mat-toolbar>
+
+<form [formGroup]="loginForm" (ngSubmit)="submit()" class="form">
+
+        <mat-form-field appearance="fill" class="form-input">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email">
+
+          <mat-error 
+            *ngIf="loginForm.controls['email'].invalid && loginForm.controls['email']touched">
+            <mat-error *ngIf="loginForm.get('email').errors.required">
+              Enter your email
+            </mat-error>
+            <mat-error *ngIf="loginForm.get('email').errors.email">
+              This field should contain @ character
+            </mat-error>
+          </mat-error>
         </mat-form-field>
+        
         <br>
-    
-        <mat-form-field class="form-element">
-            <mat-label>Password: </mat-label>
-            <input matInput placeholder="Password" formControlName="password">
+        
+        <mat-form-field appearance="fill" class="form-input">
+          <mat-label>Password</mat-label>
+          <input matInput formControlName="password">
+          <mat-hint>Min 6 characters</mat-hint>
+
+          <mat-error *ngIf="loginForm.controls['password'].invalid && loginForm.controls['password'].touched">
+            Required field, must be 6 or more characters.
+          </mat-error>
         </mat-form-field>
-    
+        
         <br>
-        <button mat-raised-button type="submit">Basic</button>
-    </form>
-</div>
+        <button mat-raised-button color="primary" type="submit"  [disabled]="!loginForm.valid">Login</button>
+
+</form>
 
 

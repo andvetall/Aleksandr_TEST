@@ -1,0 +1,30 @@
+.form {
+  margin: 0 auto;
+  text-align: center;
+  padding-top: 30px;
+}
+.form-input {
+  width: 380px;
+  margin-bottom: 5px;
+}
+button {
+  width: 90px;
+  margin-top: 35px;
+  &:disabled {
+      cursor: not-allowed;
+  }
+}
+
+.card {
+  margin-top: 50px;
+  text-align: center;
+  width: 400px;
+  .title {
+    margin: 15px 0;
+  }
+}
+
+.card-container {
+  display: flex;
+  justify-content: space-around;
+}
