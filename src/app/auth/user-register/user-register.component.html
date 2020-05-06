@@ -1,6 +1,7 @@
 <mat-toolbar color="warn">Register to the App</mat-toolbar>
 
   <form [formGroup]="registerForm" (ngSubmit)="register()" class="form">
+
       <mat-form-field appearance="fill" class="form-input">
         <mat-label>Full Name</mat-label>
         <input matInput formControlName="fullName">

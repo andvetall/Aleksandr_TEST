@@ -14,3 +14,17 @@ button {
       cursor: not-allowed;
   }
 }
+
+.card {
+  margin-top: 50px;
+  text-align: center;
+  width: 350px;
+  .title {
+    margin: 15px 0;
+  }
+}
+
+.card-container {
+  display: flex;
+  justify-content: space-around;
+}

@@ -1,5 +1,7 @@
+import { AuthService } from './../auth.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-user-login',
@@ -10,8 +12,12 @@ export class UserLoginComponent implements OnInit{
 
   loginForm: FormGroup;
   submitted = false;
+  error: any;
 
-  constructor() { }
+  constructor(
+    public auth: AuthService,
+    private toastr: ToastrService
+  ) { }
 
   ngOnInit() {
     this.loginForm = new FormGroup({
@@ -27,6 +33,10 @@ export class UserLoginComponent implements OnInit{
   }
 
   submit() {
+    if(this.loginForm.invalid) {
+      return
+    };
+
     this.submitted = true
 
     const user = {
@@ -36,6 +46,14 @@ export class UserLoginComponent implements OnInit{
 
     console.log(user)
 
-    this.loginForm.reset();
+    this.auth.login(user.email, user.password).subscribe((res: any) => {
+      console.log(res);      
+      this.loginForm.reset()
+      this.submitted = false
+    }, (err) => {
+      this.error = err.error.error.message;
+      this.toastr.error(this.error)
+    })
+
   }
 }

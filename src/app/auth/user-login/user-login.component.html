@@ -1,7 +1,7 @@
 <mat-toolbar color="primary">Login to the App</mat-toolbar>
 
 <form [formGroup]="loginForm" (ngSubmit)="submit()" class="form">
-    <div >
+
         <mat-form-field appearance="fill" class="form-input">
           <mat-label>Email</mat-label>
           <input matInput formControlName="email">
@@ -31,7 +31,7 @@
         
         <br>
         <button mat-raised-button color="primary" type="submit"  [disabled]="!loginForm.valid">Login</button>
-    </div>
+
 </form>
 
 

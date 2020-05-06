@@ -1,8 +1,7 @@
+import { ToastrService } from 'ngx-toastr';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators, FormBuilder, ValidationErrors } from '@angular/forms';
-
-
-
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { AuthService, UserData } from '../auth.service';
 
 @Component({
   selector: 'app-user-register',
@@ -14,8 +13,13 @@ export class UserRegisterComponent implements OnInit{
   
   registered = false;
   registerForm: FormGroup = new FormGroup({});
+  error: any;
   
-  constructor(private fb: FormBuilder) { }
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthService,
+    private toastr: ToastrService
+    ) {};
 
 ngOnInit() {
   this.registerForm = this.fb.group({
@@ -45,23 +49,36 @@ ConfirmedValidator(controlName: string, matchingControlName: string) {
 };
 
   register() {
-    this.registered = true
+    if(this.registerForm.invalid) {
+      return
+    };
 
-    const newUser = {
+    this.registered = true;
+
+    const newUser: UserData = {
       fullName: this.registerForm.value.fullName,
       userName: this.registerForm.value.userName,
       email: this.registerForm.value.email,
-      password: this.registerForm.value.password,
-      confirm_password: this.registerForm.value.confirm_password
+      password: this.registerForm.value.password
     };
 
-    console.log(newUser)
+    console.log(newUser);
 
-    this.registerForm.reset();
+    this.auth.signUp(newUser).subscribe((res: any) => {
+      console.log(res);      
+      this.registerForm.reset()
+      // this.router.navigate(['/admin', 'dashboard'])
+      this.registered = false
+    }, (err) => {
+      this.error = err.error.error.message;
+      this.toastr.error(this.error)
+    })
+
+    this.registerForm.reset()
   };
 
   get f(){
     return this.registerForm.controls;
   };
   
-}
+};
