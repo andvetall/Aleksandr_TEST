@@ -11,17 +11,20 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 import { AuthInterceptor } from './auth/auth.interceptor';
 import { StartPageComponent } from './start-page/start-page.component';
+import { ProductsComponent } from './pages/products/products.component';
+import { AuthGuard } from './auth/auth.guard';
 
 const INTERCEPTOR_PROVIDER: Provider = {
   provide: HTTP_INTERCEPTORS,
   useClass: AuthInterceptor,
   multi: true
-}
+};
 
 @NgModule({
   declarations: [
     AppComponent,
     StartPageComponent,
+    ProductsComponent,
   ],
   imports: [
     BrowserModule,
@@ -29,16 +32,15 @@ const INTERCEPTOR_PROVIDER: Provider = {
     HttpClientModule,
     BrowserAnimationsModule,
     AuthModule,
-    AppRoutingModule,   
+    AppRoutingModule,
     MaterialModule,
     ToastrModule.forRoot({
-      closeButton: true,
       preventDuplicates: false
     })
   ],
   exports: [
   ],
-  providers: [INTERCEPTOR_PROVIDER],
+  providers: [INTERCEPTOR_PROVIDER, AuthGuard ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

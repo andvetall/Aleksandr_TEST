@@ -1,7 +1,9 @@
-import { AuthService, UserData } from './../auth.service';
+import { AuthService } from './../auth.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
+import { UserData } from 'src/app/shared/interfaces/interfaces';
 
 @Component({
   selector: 'app-user-login',
@@ -16,7 +18,8 @@ export class UserLoginComponent implements OnInit{
 
   constructor(
     public auth: AuthService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -33,9 +36,9 @@ export class UserLoginComponent implements OnInit{
   }
 
   submit() {
-    if(this.loginForm.invalid) {
-      return
-    };
+    if (this.loginForm.invalid) {
+      return;
+    }
 
     this.submitted = true;
 
@@ -47,13 +50,11 @@ export class UserLoginComponent implements OnInit{
     console.log(user);
 
     this.auth.login(user).subscribe((res: any) => {
-      console.log(res);      
-      this.loginForm.reset()
-      this.submitted = false
-    }, (err) => {
-      this.error = err.error.error.message;
-      this.toastr.error(this.error)
-    })
+      console.log(res);
+      this.loginForm.reset();
+      this.router.navigate(['/products']);
+      this.submitted = false;
+    });
 
   }
 }

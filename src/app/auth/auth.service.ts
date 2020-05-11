@@ -1,57 +1,55 @@
 import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { throwError, Subject, Observable } from 'rxjs';
-
-export interface UserData {
-  fullName?: string,
-  userName?: string,
-  email: string,
-  password: string,
-}
-
-export interface AuthResponseData {
-  idToken: string,
-  email: string,
-  refreshToken: string,
-  expiresIn: string,
-  localId: string,
-  registered?: boolean
-}
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { UserData, AuthResponseData } from '../shared/interfaces/interfaces';
+import { tap } from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
 
-  public error$: Subject<string> = new Subject<string>()
+  constructor(private http: HttpClient) {}
 
-  constructor(private http: HttpClient) {};
-
-  signUp(userData: UserData): Observable<any> {
-    return this.http.post<AuthResponseData>(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.apiKey}`, userData);
+  get token(): string {
+    const expDate = new Date(localStorage.getItem('fb-token-exp'));
+    if (new Date() > expDate) {
+      return null;
     }
-
-
-  login(userData: UserData): Observable<any> {
-    return this.http.post<AuthResponseData>(
-      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${environment.apiKey}`, userData);
+    return localStorage.getItem('fb-token');
   }
 
-    private handleError(error: HttpErrorResponse) {
-      const {message} = error.error.error
-  
-      switch (message) {
-        case 'INVALID_EMAIL':
-          this.error$.next('Invalid email')
-          break
-        case 'INVALID_PASSWORD':
-          this.error$.next('Invalid password')
-          break
-        case 'EMAIL_NOT_FOUND':
-          this.error$.next('Email not found')
-          break
-      }
-  
-      return throwError(error)
+  signUp(user: UserData): Observable<any> {
+    return this.http.post(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.apiKey}`, user)
+    .pipe(
+      tap(this.setToken),
+    );
+  }
+
+
+  login(userOld: UserData): Observable<any> {
+    return this.http.post(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${environment.apiKey}`, userOld)
+        .pipe(
+          tap(this.setToken),
+        );
+  }
+
+  logout() {
+    this.setToken(null);
+  }
+
+  isAuthenticated(): boolean {
+    return !!this.token;
+  }
+
+  private setToken(response: AuthResponseData | null) {
+    if (response) {
+      const expDate = new Date(new Date().getTime() + +response.expiresIn * 1000);
+      localStorage.setItem('fb-token', response.idToken);
+      localStorage.setItem('fb-token-exp', expDate.toString());
+    } else {
+      localStorage.clear();
     }
-    
+  }
+
 }
